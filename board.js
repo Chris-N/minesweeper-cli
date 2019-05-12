@@ -12,83 +12,104 @@ Board.prototype.buildInitBoard = function(){
     for(let i = 0; i < this.board.length; i++){
         this.board[i] = new Space();
     }
+}
 
-    let vis = '  A';
+Board.prototype.columnHeader = function(){
+    this.display += '  A';
     for(let i = 1; i < this.col; i++){
-        vis += ` ${columnNAMES[i]}`;
+        this.display += ` ${columnNAMES[i]}`;
     }
-    vis += '\n';
+    this.display += '\n';
+}
+
+Board.prototype.displayRow = function(i, x = '_'){
+    if (i % this.col === 0)
+        this.display += (this.rowNumber() === this.row) ? `${this.rowNumber()}  |` : `${this.rowNumber()} ${x}|`;
+    else if (i % this.col < this.col - 1) {
+        this.display += (this.rowNumber() === this.row) ? ` |` : `${x}|`;
+    }
+    else if (i % this.col === this.col - 1) {
+        this.display += (this.rowNumber() === this.row) ? '\n' : `${x}\n`;
+    }
+}
+
+Board.prototype.displayCurrent = function(){
+    this.display = '';
+    this.columnHeader();
 
     for(let i = 0; i < this.board.length; i++){
-        if(i%this.col === 0)
-            vis += (rowNumber(vis) === this.row) ? `${rowNumber(vis)}  |` : `${rowNumber(vis)} _|`;
-        else if(i%this.col < this.col-1){
-            vis += (rowNumber(vis) === this.row) ? ' |' : '_|';
+        if(this.board[i].isVisable()){
+            // can see number
+            this.displayRow(i, this.board[i].getBombCount());
         }
-        else if(i%this.col === this.col-1){
-            vis += (rowNumber(vis) === this.row) ? '\n' : '_\n';
+        else if(this.board[i].isFlagged()){
+            // can see flag
+            this.displayRow(i, 'F');
+        }
+        else{
+            // default hidden
+            this.displayRow(i);
         }
     }
-    this.display = vis;
 }
 
 Board.prototype.discover = function(spot){
     let index = (Number(spot[1]) - 1) * this.col;
     index += columnNAMES.indexOf(spot[0]);
+    console.log(this.board[index]);
 
-    if(spot[3] !== undefined) this.board[index].setFlag();
+    if(spot[2] !== undefined) this.board[index].setFlag();
     else{
         if(this.board[index].isBomb()) return true;
 
         this.board[index].select();
-        this.board.checkBombs();
-        // check surrounding for bombs?
+        this.checkBombs(index);
+        console.log(this.board[index]);
     }
 
     return false;
 }
 
 Board.prototype.checkBombs = function(index){
-    let colLimit = index%this.col;
-    let rowLimit = index%this.row;
     let direction = {up: true, right: true, down: true, left: true};
 
-    if(colLimit ===  0){ direction.left = false; }
-    if(colLimit ===  this.col-1){ direction.right = false; }
-    if(rowLimit === 0){ direction.up = false; }
-    if(rowLimit ===  this.row-1){ direction.down = false; }
+    if(index%this.col ===  0){ direction.left = false; }
+    if(index%this.col ===  this.col-1){ direction.right = false; }
+    if(index - this.col < 0){ direction.up = false; }
+    if(index >=  this.row * this.col){ direction.down = false; }
 
     if(direction.up){
         let topRow = index - this.col;
-        if(!this.board[topRow].isBomb()) this.board[index].countNearBombs();
+        if(this.board[topRow].isBomb()) this.board[index].countNearBombs();
         if(direction.right){
-            if(!this.board[topRow+1].isBomb()) this.board[index].countNearBombs();
+            if(this.board[topRow+1].isBomb()) this.board[index].countNearBombs();
         }
         if(direction.left){
-            if(!this.board[topRow-1].isBomb()) this.board[index].countNearBombs();
+            if(this.board[topRow-1].isBomb()) this.board[index].countNearBombs();
         }
     }
     if(direction.down){
         let lowerRow = index + this.col;
-        if(!this.board[lowerRow].isBomb()) this.board[index].countNearBombs();
+        if(this.board[lowerRow].isBomb()) this.board[index].countNearBombs();
         if(direction.right){
-            if(!this.board[lowerRow+1].isBomb()) this.board[index].countNearBombs();
+            if(this.board[lowerRow+1].isBomb()) this.board[index].countNearBombs();
         }
         if(direction.left){
-            if(!this.board[lowerRow-1].isBomb()) this.board[index].countNearBombs();
+            if(this.board[lowerRow-1].isBomb()) this.board[index].countNearBombs();
         }
     }
     if(direction.right){
-        if (!this.board[index + 1].isBomb()) this.board[index].countNearBombs();
+        if (this.board[index + 1].isBomb()) this.board[index].countNearBombs();
     }
     if(direction.left){
-        if (!this.board[index - 1].isBomb()) this.board[index].countNearBombs();
+        if (this.board[index - 1].isBomb()) this.board[index].countNearBombs();
     }
 }
 
 Board.prototype.displayBoard = function(){
     console.log(this.display);
 }
+
 Board.prototype.applyBoard = function(){
 
 }
@@ -108,8 +129,8 @@ Board.prototype.test = function(){
     console.log('TEST from import BOARD class');
 }
 
-function rowNumber(str){
-    return str.split(/[\n]/g).length - 1;
+Board.prototype.rowNumber = function(){
+    return this.display.split(/[\n]/g).length-1;
 }
 
 module.exports = Board;

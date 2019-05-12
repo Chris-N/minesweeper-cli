@@ -10,7 +10,7 @@ let playing = false;
 let newGame = false;
 let ROW = 5;
 let COL = 10;
-const board = new Board(ROW, COL);
+let board = undefined;
 
 async function main(){
     while(!quit){
@@ -42,10 +42,13 @@ function minesweeper(){
     return new Promise((res, rej) => {
         if(newGame){
             console.log('PLAY!!');
+            board = new Board(ROW, COL);
             board.buildInitBoard();
             board.setBoard();
 
             // display board
+            console.log(board.board);
+            board.displayCurrent();
             board.displayBoard();
             newGame = false;
         }
@@ -53,14 +56,15 @@ function minesweeper(){
         // make selection
         rd.question("Select a square? (Ex: A3, G5x [x - flag spot]): ", spot => {
             // result of that selection
-            if(board.discover(spot)){
+            if(spot !== '' && board.discover(spot)){
                 // Bomb!
                 // Display with bomb
                 playing = false;
                 console.log('Game Over, you lose\n');
             }
             else {
-                // Display from new move
+                board.displayCurrent();
+                console.log(board.display);
             }
 
             res();

@@ -11,13 +11,22 @@ Space.prototype.select = function(){
 }
 
 Space.prototype.setFlag = function(){
-    this.flag = true;
+    this.flag = !this.flag;
+}
+Space.prototype.isFlagged = function(){
+    return this.flag;
+}
+Space.prototype.isVisable = function(){
+    return this.visable;
 }
 Space.prototype.isBomb = function(){
     return this.bomb;
 }
 Space.prototype.setBomb = function(){
     this.bomb = true;
+}
+Space.prototype.getBombCount = function(){
+    return this.bombCount;
 }
 Space.prototype.countNearBombs = function(){
     this.bombCount++;
