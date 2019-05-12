@@ -24,12 +24,12 @@ Board.prototype.columnHeader = function(){
 
 Board.prototype.displayRow = function(i, x = '_'){
     if (i % this.col === 0)
-        this.display += (this.rowNumber() === this.row) ? `${this.rowNumber()}  |` : `${this.rowNumber()} ${x}|`;
+        this.display += (this.rowNumber() === this.row && x === '_') ? `${this.rowNumber()}  |` : `${this.rowNumber()} ${x}|`;
     else if (i % this.col < this.col - 1) {
-        this.display += (this.rowNumber() === this.row) ? ` |` : `${x}|`;
+        this.display += (this.rowNumber() === this.row && x === '_') ? ` |` : `${x}|`;
     }
     else if (i % this.col === this.col - 1) {
-        this.display += (this.rowNumber() === this.row) ? '\n' : `${x}\n`;
+        this.display += (this.rowNumber() === this.row && x === '_') ? '\n' : `${x}\n`;
     }
 }
 
@@ -76,7 +76,7 @@ Board.prototype.checkBombs = function(index){
     if(index%this.col ===  0){ direction.left = false; }
     if(index%this.col ===  this.col-1){ direction.right = false; }
     if(index - this.col < 0){ direction.up = false; }
-    if(index >=  this.row * this.col){ direction.down = false; }
+    if(index + this.col >=  this.row * this.col){ direction.down = false; }
 
     if(direction.up){
         let topRow = index - this.col;
@@ -110,10 +110,6 @@ Board.prototype.displayBoard = function(){
     console.log(this.display);
 }
 
-Board.prototype.applyBoard = function(){
-
-}
-
 Board.prototype.setBoard = function(){
     let totalBombs = Math.floor((this.row * this.col) * .3);
     while(totalBombs > 0){
@@ -123,6 +119,17 @@ Board.prototype.setBoard = function(){
             totalBombs--;
         }
     }
+}
+Board.prototype.winCheck = function(){
+    let win = true;
+    console.log(this.board);
+    for(let i = 0; i < this.board.length; i++){
+        if(this.board[i].isFlagged() !== this.board[i].isBomb()){
+            win = false;
+            break;
+        }
+    }
+    return win;
 }
 
 Board.prototype.test = function(){

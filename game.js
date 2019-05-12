@@ -8,8 +8,8 @@ const rd = readline.createInterface({ input: process.stdin, output: process.stdo
 let quit = false;
 let playing = false;
 let newGame = false;
-let ROW = 5;
-let COL = 10;
+let ROW = 3;
+let COL = 3;
 let board = undefined;
 
 async function main(){
@@ -47,7 +47,6 @@ function minesweeper(){
             board.setBoard();
 
             // display board
-            console.log(board.board);
             board.displayCurrent();
             board.displayBoard();
             newGame = false;
@@ -58,13 +57,18 @@ function minesweeper(){
             // result of that selection
             if(spot !== '' && board.discover(spot)){
                 // Bomb!
-                // Display with bomb
                 playing = false;
+                console.log("BOOOM!!!")
                 console.log('Game Over, you lose\n');
             }
             else {
                 board.displayCurrent();
-                console.log(board.display);
+                board.displayBoard();
+                if(board.winCheck()){
+                    playing = false;
+                    console.log("CONGRATULATIONS!!!")
+                    console.log('You Won!\n');
+                }
             }
 
             res();
