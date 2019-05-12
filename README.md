@@ -21,8 +21,8 @@ Number represent a row
 5   | | | | | | 
 ```
 
-Commands
--select a square: C3
--flag a square: C3x
+* Commands
+   * Select a square: C3
+   * Flag a square: C3x
 
 Have fun!
