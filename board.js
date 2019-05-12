@@ -56,7 +56,6 @@ Board.prototype.displayCurrent = function(){
 Board.prototype.discover = function(spot){
     let index = (Number(spot[1]) - 1) * this.col;
     index += columnNAMES.indexOf(spot[0]);
-    console.log(this.board[index]);
 
     if(spot[2] !== undefined) this.board[index].setFlag();
     else{
@@ -64,7 +63,6 @@ Board.prototype.discover = function(spot){
 
         this.board[index].select();
         this.checkBombs(index);
-        console.log(this.board[index]);
     }
 
     return false;
@@ -122,7 +120,6 @@ Board.prototype.setBoard = function(){
 }
 Board.prototype.winCheck = function(){
     let win = true;
-    console.log(this.board);
     for(let i = 0; i < this.board.length; i++){
         if(this.board[i].isFlagged() !== this.board[i].isBomb()){
             win = false;

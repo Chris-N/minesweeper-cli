@@ -8,8 +8,8 @@ const rd = readline.createInterface({ input: process.stdin, output: process.stdo
 let quit = false;
 let playing = false;
 let newGame = false;
-let ROW = 3;
-let COL = 3;
+let ROW = 5;
+let COL = 10;
 let board = undefined;
 
 async function main(){
